@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="vcard.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      const getBase64FromUrl = async (url) => {
+        const data = await fetch(url)
+        const blob = await data.blob()
+        return new Promise((resolve) => {
+          const reader = new FileReader()
+          reader.readAsDataURL(blob)
+          reader.onloadend = () => {
+            const base64data = reader.result
+            resolve(base64data)
+          }
+        })
+      }
+      // Without helper methods
+      var johnDoe = vCard.create(vCard.Version.FOUR)
+      getBase64FromUrl(
+        'https://lh3.googleusercontent.com/i7cTyGnCwLIJhT1t2YpLW-zHt8ZKalgQiqfrYnZQl975-ygD_0mOXaYZMzekfKW_ydHRutDbNzeqpWoLkFR4Yx2Z2bgNj2XskKJrfw8'
+      ).then((img) => {
+        const _img = img.replace('data:image/png;base64,', '')
+        console.log(_img)
+        johnDoe.add(vCard.Entry.NAME, 'DOE;John;;')
+        johnDoe.add(vCard.Entry.FORMATTEDNAME, 'John Doe')
+        johnDoe.add(vCard.Entry.NICKNAME, 'jd')
+        johnDoe.add(vCard.Entry.TITLE, 'Missing man')
+        johnDoe.add(vCard.Entry.PHONE, '555-555-555', vCard.Type.CELL)
+        johnDoe.add(vCard.Entry.EMAIL, 'john.doe@work.com', vCard.Type.WORK)
+        johnDoe.add(vCard.Entry.EMAIL, 'john.doe@home.com', vCard.Type.HOME)
+        johnDoe.add(vCard.Entry.ORGANIZATION, 'JohnDoe Corp.')
+        johnDoe.add(
+          vCard.Entry.ADDRESS,
+          ';;street;city;state;zip code;country',
+          vCard.Type.HOME
+        )
+        johnDoe.add(vCard.Entry.URL, 'http://john.doe')
+        johnDoe.add(vCard.Entry.PHOTO, `TYPE=JPEG;ENCODING=BASE64:${_img}`)
+        var link = vCard.export(johnDoe, 'John Doe', false)
+        document.body.appendChild(link)
+      })
+    </script>
+    <br />
+  </body>
+</html>
